@@ -170,9 +170,9 @@ namespace KG_6
 
             int lineCount = (int)numericUpDown_number_of_lines.Value; //Количество линий
             int minLineLength = 10; //Минимальная длина линии
-            int maxLineLength = 100; //Максимальная длина линии
+            int maxLineLength = 300; //Максимальная длина линии
             int minLineWidth = 1; //Минимальная толщина линии
-            int maxLineWidth = 5; //Максимальная толщина линии
+            int maxLineWidth = 3; //Максимальная толщина линии
 
             using (Graphics g = Graphics.FromImage(noisyImage))
             {
@@ -190,7 +190,7 @@ namespace KG_6
                     int endX = startX + (int)(lineLength * Math.Cos(angle * Math.PI / 180));
                     int endY = startY + (int)(lineLength * Math.Sin(angle * Math.PI / 180));
 
-                    Color lineColor = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256)); //Случайный цвет
+                    Color lineColor = Color.White;
 
                     int lineWidth = random.Next(minLineWidth, maxLineWidth + 1); //Случайная толщина
 
@@ -393,7 +393,39 @@ namespace KG_6
         private void button1_Click(object sender, EventArgs e)
         {
             if (originalImage == null) { return; }
+            ApplyGlassEffect((int)numericUpDown_glass_strength.Value);
+        }
 
+        private void ApplyGlassEffect(int strength)
+        {
+            Bitmap source = new Bitmap(pictureBox_image.Image);
+            Bitmap result = new Bitmap(source.Width, source.Height);
+
+            Random random = new Random();
+
+            for (int y = 0; y < source.Height; y++)
+            {
+                for (int x = 0; x < source.Width; x++)
+                {
+                    //Вычисляем случайное смещение координат
+                    int offsetX = random.Next(-strength, strength + 1);
+                    int offsetY = random.Next(-strength, strength + 1);
+
+                    int distortedX = x + offsetX;
+                    int distortedY = y + offsetY;
+
+                    //Отзеркаливание координат, если они выходят за границы изображения
+                    if (distortedX < 0) distortedX = -distortedX;
+                    if (distortedX >= source.Width) distortedX = 2 * source.Width - distortedX - 1;
+                    if (distortedY < 0) distortedY = -distortedY;
+                    if (distortedY >= source.Height) distortedY = 2 * source.Height - distortedY - 1;
+
+                    Color distortedColor = source.GetPixel(distortedX, distortedY);
+
+                    result.SetPixel(x, y, distortedColor);
+                }
+            }
+            pictureBox_image.Image = result;
         }
     }
 }
