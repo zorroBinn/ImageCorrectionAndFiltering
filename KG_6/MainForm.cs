@@ -390,7 +390,7 @@ namespace KG_6
             if (numericUpDown_sharpen_k.Value > numericUpDown_sharpen_k.Maximum) numericUpDown_sharpen_k.Value = numericUpDown_sharpen_k.Maximum;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button_glass_Click(object sender, EventArgs e)
         {
             if (originalImage == null) { return; }
             ApplyGlassEffect((int)numericUpDown_glass_strength.Value);
